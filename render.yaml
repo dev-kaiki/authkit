@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: dev-kaiki-authkit-api
+    name: dev-kaiki-REPO-api
     runtime: node
     plan: free
     region: oregon
