@@ -1,0 +1,27 @@
+# Node
+node_modules
+.pnpm-store
+npm-debug.log*
+pnpm-debug.log*
+
+# Env
+.env
+.env.*.local
+
+# Next
+.next
+out
+
+# Nest
+dist
+
+# OS
+.DS_Store
+
+# IDE
+.vscode
+.idea
+
+# Prisma
+apps/api/prisma/dev.db
+apps/api/prisma/dev.db-journal
