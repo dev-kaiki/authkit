@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: dev-kaiki-authkit-api
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    autoDeploy: true
+    healthCheckPath: /health
+
+    buildCommand: |
+      corepack enable
+      pnpm install --frozen-lockfile
+      pnpm --filter api exec prisma generate
+      pnpm --filter api build
+
+    preDeployCommand: |
+      pnpm --filter api exec prisma migrate deploy
+
+    startCommand: pnpm --filter api start:prod
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
