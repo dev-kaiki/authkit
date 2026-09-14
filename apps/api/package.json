@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nest start --watch",
     "build": "nest build",
+    "start:prod": "node dist/main.js",
     "lint": "eslint .",
     "test": "echo \"(adicione testes depois)\"",
     "prisma:generate": "prisma generate",

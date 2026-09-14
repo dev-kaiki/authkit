@@ -89,5 +89,19 @@ https://render.com/deploy?repo=https://github.com/dev-kaiki/authkit
 WEB — Vercel:
 https://vercel.com/new/clone?repository-url=https://github.com/dev-kaiki/authkit&project-name=dev-kaiki-authkit&repository-name=authkit&root-directory=apps/web
 
-No Render é preciso definir `DATABASE_URL`, `JWT_SECRET` e `CORS_ORIGIN`; na
-Vercel, `NEXT_PUBLIC_API_URL` apontando para a API.
+O blueprint cria o Postgres junto e injeta a `DATABASE_URL`; o `JWT_SECRET` é
+sorteado pelo Render. Restam duas coisas manuais, e há uma ordem entre elas:
+
+1. **Render primeiro.** Suba a API pelo blueprint. Ela vai falhar ao iniciar
+   enquanto `CORS_ORIGIN` estiver vazia — de propósito: sem lista de origens, o
+   CORS aceitaria requisição autenticada de qualquer site.
+2. **Vercel depois.** Importe com root `apps/web` e defina
+   `NEXT_PUBLIC_API_URL` com a URL da API do Render.
+3. **Volte ao Render** e preencha `CORS_ORIGIN` com a URL da Vercel. A API sobe.
+4. **Crie o primeiro admin:** defina `ADMIN_EMAIL` e `ADMIN_PASSWORD` no Render
+   e rode `pnpm --filter api prisma:seed` no shell do serviço. Sem isso não
+   existe ninguém capaz de acessar `/users`, porque `/auth/register` só cria
+   `USER`.
+
+No plano free do Render o serviço hiberna depois de um tempo sem uso, então a
+primeira requisição depois da hibernação demora alguns segundos.

@@ -1,3 +1,15 @@
+# Blueprint do Render: cria a API e o Postgres que ela usa.
+#
+# O que continua sendo manual (sync: false) é o que o Render não tem como
+# adivinhar: o segredo do JWT, a origem do front e as credenciais do primeiro
+# admin.
+databases:
+  - name: dev-kaiki-authkit-db
+    databaseName: authkit
+    user: authkit
+    plan: free
+    region: oregon
+
 services:
   - type: web
     name: dev-kaiki-authkit-api
@@ -22,9 +34,24 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+
+      # Ligado ao banco acima: o Render injeta a URL, não precisa colar.
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: dev-kaiki-authkit-db
+          property: connectionString
+
+      # Gerado pelo Render no primeiro deploy e mantido depois.
       - key: JWT_SECRET
-        sync: false
+        generateValue: true
+
+      # A URL do front na Vercel. A API se recusa a subir sem isso em
+      # produção, porque sem lista de origens o CORS aceitaria qualquer site.
       - key: CORS_ORIGIN
+        sync: false
+
+      # Usadas só se você rodar o seed do primeiro admin.
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
         sync: false

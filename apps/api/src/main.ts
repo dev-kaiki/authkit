@@ -12,7 +12,21 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(helmet());
-  app.enableCors({ origin: true, credentials: true });
+
+  // `origin: true` devolve a origem que pediu, então com credentials ligado
+  // qualquer site conseguiria chamar esta API em nome de quem estivesse
+  // logado. Em produção a lista vem de CORS_ORIGIN (separada por vírgula);
+  // fora dela, libera geral para facilitar o desenvolvimento local.
+  const origins = (process.env.CORS_ORIGIN ?? '')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
+
+  if (process.env.NODE_ENV === 'production' && origins.length === 0) {
+    throw new Error('CORS_ORIGIN is required in production');
+  }
+
+  app.enableCors({ origin: origins.length > 0 ? origins : true, credentials: true });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
