@@ -30,14 +30,11 @@ async function main() {
     create: { email, password: hash, role: Role.ADMIN, name: 'Admin' },
     select: { id: true, email: true, role: true },
   });
-
-  // eslint-disable-next-line no-console
   console.log(`Seeded ${admin.role} ${admin.email} (${admin.id})`);
 }
 
 main()
   .catch((error) => {
-    // eslint-disable-next-line no-console
     console.error(error instanceof Error ? error.message : error);
     process.exit(1);
   })

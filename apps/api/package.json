@@ -30,15 +30,16 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@nestjs/cli": "^10.0.0",
     "@types/express": "^5.0.6",
     "@types/node": "^20.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^9.0.0",
+    "globals": "^17.12.0",
     "prisma": "^5.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8.70.0"
   },
   "prisma": {
     "seed": "ts-node --compilerOptions {\"module\":\"commonjs\"} prisma/seed.ts"
