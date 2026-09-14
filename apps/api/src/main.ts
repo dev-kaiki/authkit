@@ -1,4 +1,7 @@
 import 'reflect-metadata';
+// Loaded before anything else imports AppModule: JwtModule reads JWT_SECRET
+// while the module tree is being built, which happens on that import.
+import 'dotenv/config';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
@@ -14,9 +17,10 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   const config = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('API base do template fullstack')
+    .setTitle('AuthKit API')
+    .setDescription('Auth com JWT + refresh rotativo, RBAC e rate limit')
     .setVersion('1.0.0')
+    .addBearerAuth()
     .build();
 
   const doc = SwaggerModule.createDocument(app, config);

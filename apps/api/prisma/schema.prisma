@@ -7,9 +7,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
+  password  String
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  refreshTokens RefreshToken[]
+}
+
+/// One row per issued refresh token. The token itself never touches the
+/// database — only its SHA-256 hash, so a database dump cannot be replayed
+/// against the API. Rotation revokes the old row and inserts a new one.
+model RefreshToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
