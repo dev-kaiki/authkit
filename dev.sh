@@ -13,11 +13,9 @@ if [ ! -f apps/api/.env ]; then
   echo "apps/api/.env criado a partir do exemplo, com um JWT_SECRET novo."
 fi
 
-# Só o Postgres: o compose ainda declara redis e minio, que esta API não usa.
-pnpm exec docker compose up -d postgres
-
-echo "Aguardando o Postgres..."
-until docker compose exec -T postgres pg_isready -U app >/dev/null 2>&1; do sleep 1; done
+# --wait usa o healthcheck do compose: retorna só quando o Postgres aceita
+# conexão, e falha se ele não ficar saudável.
+docker compose up -d --wait
 
 pnpm --filter api exec prisma migrate deploy
 pnpm --filter api exec prisma generate
