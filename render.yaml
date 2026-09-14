@@ -26,10 +26,11 @@ services:
       pnpm --filter api exec prisma generate
       pnpm --filter api build
 
-    preDeployCommand: |
-      pnpm --filter api exec prisma migrate deploy
-
-    startCommand: pnpm --filter api start:prod
+    # As migrations rodam aqui, e não em preDeployCommand, porque o plano free
+    # do Render não suporta pre-deploy. `migrate deploy` é idempotente: nas
+    # subidas seguintes ele não encontra nada pendente e sai.
+    startCommand: |
+      pnpm --filter api exec prisma migrate deploy && pnpm --filter api start:prod
 
     envVars:
       - key: NODE_ENV
